@@ -20,7 +20,7 @@ namespace ConsoleShortcuts
             Prompt = prompt;
             Options = options;
             Console.CursorVisible = false;
-            this.Display(); // Display menu, an important part of having the user make a decision.
+            
         }
 
         protected virtual void Display() // The HighlightMenu will need to override this.
@@ -51,6 +51,7 @@ namespace ConsoleShortcuts
                And I can't imagine any case scenario where I'd need more than 9 elements in this type of menu. */
 
             ShowNumbers = true; // ShowNumbers must be true for this type of menu as the user needs to know what to press.
+            this.Display(); // Display menu, an important part of having the user make a decision.
         }
 
         public Tuple<int, string> GetSelection()
@@ -95,14 +96,13 @@ namespace ConsoleShortcuts
                 // Once the selected option is changed, rather than overwrite the whole menu and redraw it with new highlights, we simply overwrite what we need to.
                 // First, we must erase the highlight of the current selected option:
                 Console.SetCursorPosition(0, SelectedOption + offset); // line number = index+1 due to prompt.
-                int ToEndOfWin = Console.WindowWidth - $"\t  {Options[_selectedOption]}".Length;
+                int ToEndOfWin = Console.WindowWidth; // It should be impossible for this to run over to new lines. I've not been able to make it happen.
                 Console.WriteLine($"\t  {Options[_selectedOption]}".PadRight(ToEndOfWin)); // Write over but without highlight
                 // This is different to writing a normal non-highlighted option as we need to clear the trailing whitespace to the right that would've previously been added.
 
                 // Now, we target our newly selected option and give it a highlight.
                 Console.SetCursorPosition(0, value + offset);
-                Console.Write("\t");
-                HighlightPrint($"  {Options[value]}".PadRight(HighlightLength)); // Write actual option + whitespace
+                PrintHighlightedOption(Options[value]);
 
                 _selectedOption = value; // Finally update backing field to keep it accurate
                 
@@ -115,16 +115,27 @@ namespace ConsoleShortcuts
 
         public HighlightMenu(string prompt, params string[] options) : base(prompt, options)
         {
-            offset = Console.CursorTop-4;
+            offset = Console.CursorTop+1;
             // No idea why, but Console.CursorTop reports a number that is equal to the line the cursor is on +5.
             // We add one to include the prompt that we'll be writing.
+
+            // If HighlightLength isn't long enough for all of our options:
+            int max = HighlightLength;
+            foreach (string Option in Options) {
+                if (Option.Length > max) { max = Option.Length; }
+            }
+            HighlightLength = max+4;
+
+            Display(); // This was taken out of the BaseMenu class as we need to display after we work out the highlight length.
         }
 
-        private void HighlightPrint(params string[] toPrint) // Print any number of arguments with a white highlights. This method is private as it should only be used within the class.
+        private void PrintHighlightedOption(string Option)
         {
+            Console.Write("\t"); // We're writing the tab outside of the main print for stlystic reasons; we want the highlight to have a left margin a little bit.
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Black;
-            foreach (string argument in toPrint) { Console.WriteLine(argument); } 
+            Console.WriteLine($"  {Option}".PadRight(HighlightLength)); // Print the option with highlighted (white) background, using this method.
+            // PadRight provides some common trailing whitespace. Interestingly enough it creates a common margin, no matter the length of the preceding string.                                                         
             Console.ResetColor();
         }
 
@@ -135,15 +146,10 @@ namespace ConsoleShortcuts
             {
                 if (i == 0) // First option
                 {
-                    Console.Write("\t"); // We're writing the tab in here for stlystic reasons; we want the highlight to have a left margin a little bit.
-
-                    HighlightPrint($"  {Options[i]}".PadRight(HighlightLength)); // Print the option with highlighted (white) background, using this method.
-                    // also print the option string + some whitespace to extend the highlight as is normally done.
-                    // For some reason with PadRight you don't need to subtract the initial stringlength to get a common total highlight length.
-                    // I don't know why, but do I really need to?
+                    PrintHighlightedOption(Options[i]);
                 }
                 else { Console.WriteLine($"\t  {Options[i]}"); }
-                // Otherwise just write the option normally. No whitespace is needed as there's no highlight.
+                // Otherwise just write the option normally. No trailing whitespace is needed as there's no highlight.
             }
 
             
