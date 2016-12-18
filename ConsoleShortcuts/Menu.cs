@@ -94,26 +94,30 @@ namespace ConsoleShortcuts
             {
                 // Once the selected option is changed, rather than overwrite the whole menu and redraw it with new highlights, we simply overwrite what we need to.
                 // First, we must erase the highlight of the current selected option:
-                Console.SetCursorPosition(0, SelectedOption+1); // line number = index+1 due to prompt.
+                Console.SetCursorPosition(0, SelectedOption + offset); // line number = index+1 due to prompt.
                 int ToEndOfWin = Console.WindowWidth - $"\t  {Options[_selectedOption]}".Length;
                 Console.WriteLine($"\t  {Options[_selectedOption]}".PadRight(ToEndOfWin)); // Write over but without highlight
                 // This is different to writing a normal non-highlighted option as we need to clear the trailing whitespace to the right that would've previously been added.
 
                 // Now, we target our newly selected option and give it a highlight.
-                Console.SetCursorPosition(0, value + 1);
+                Console.SetCursorPosition(0, value + offset);
                 Console.Write("\t");
                 HighlightPrint($"  {Options[value]}".PadRight(HighlightLength)); // Write actual option + whitespace
 
-                _selectedOption = value;
+                _selectedOption = value; // Finall,y update backing field to keep it accurate
                 
             }
         }
         // This will be returned by GetSelection() anyway; there's no need to expose it.
         public int HighlightLength { get; set; } = 50; // Default highlight length. Can be changed in a collection initializer if so desired.
+        public bool ClearAfterSelection { get; set; } = true; // Whether or not to clear the console after the user presses Enter.
+        private int offset { get; set; }
 
         public HighlightMenu(string prompt, params string[] options) : base(prompt, options)
         {
-            // Base constructor will handle it all
+            offset = Console.CursorTop-4;
+            // No idea why, but Console.CursorTop reports a number that is equal to the line the cursor is on +5.
+            // We add one to include the prompt that we'll be writing.
         }
 
         private void HighlightPrint(params string[] toPrint) // Print any number of arguments with a white highlights. This method is private as it should only be used within the class.
@@ -127,7 +131,7 @@ namespace ConsoleShortcuts
         protected override void Display()
         {
             Console.WriteLine(Prompt);
-            
+            //Console.SetCursorPosition(0, offset);
             for (int i = 0; i < Options.Length; i++)
             {
                 if (i == 0) // First option
@@ -168,8 +172,8 @@ namespace ConsoleShortcuts
                 
             }
 
-            Console.Clear();
-            return Tuple.Create(SelectedOption, Options[SelectedOption]);
+            if (ClearAfterSelection) { Console.Clear(); }
+            return Tuple.Create(SelectedOption, Options[SelectedOption]); // Return the string and the option number to minimize work done after result has been returned.
         }
     }
 }
