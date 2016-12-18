@@ -10,10 +10,16 @@ namespace ConsoleShortcuts
     {
         private ConsoleKey exitKey { get; set; } = ConsoleKey.Enter; // The key, defaults to enter. Not included in constructor, can be specified in a collection initializer if so desired.
 
-        public Exit(string text)
+        public Exit()
         {
-            Console.WriteLine(text=$"Press {exitKey.ToString()} to exit..."); // Define a default standard text which should work for most cases.
+            Console.WriteLine($"\nPress {exitKey.ToString()} to exit..."); // Define a default standard text which should work for most cases.
             ActuallyExit(); // Once called, exit. Generally an instance is not created unless an exit is immediately required.
+        }
+
+        public Exit(string text) // Separate overload if custom text is desired
+        {
+            Console.WriteLine($"\n{text}");
+            ActuallyExit();
         }
 
         private void ActuallyExit()
