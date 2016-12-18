@@ -104,7 +104,7 @@ namespace ConsoleShortcuts
                 Console.Write("\t");
                 HighlightPrint($"  {Options[value]}".PadRight(HighlightLength)); // Write actual option + whitespace
 
-                _selectedOption = value; // Finall,y update backing field to keep it accurate
+                _selectedOption = value; // Finally update backing field to keep it accurate
                 
             }
         }
@@ -131,7 +131,6 @@ namespace ConsoleShortcuts
         protected override void Display()
         {
             Console.WriteLine(Prompt);
-            //Console.SetCursorPosition(0, offset);
             for (int i = 0; i < Options.Length; i++)
             {
                 if (i == 0) // First option
