@@ -31,7 +31,7 @@ namespace ConsoleShortcuts
                 Update(value - Progress); // Call Update() here so we can access the old value of progress and add delta in Update() to get the new.
                 _Progress = value;
 
-                ProgressChars = (int)Math.Floor(value / CharWorth); // Assigning it to an int implicitly rounds
+                ProgressChars = (int)Math.Floor(value / CharWorth);
             }
         }
 
@@ -42,14 +42,14 @@ namespace ConsoleShortcuts
         private static double CharWorth { get; set; } = 100 / ProgressCharsAvail; // How much progress each character represents
 
         
-
         public ProgressBar(int initialProgress) // Constructor
         {
-#if DEBUG
+            #if DEBUG
             Console.WriteLine($"We have {Space} characters available in this console.\n\t- This means that we have {ProgressCharsAvail} fills available.\n\t- Each character is worth {CharWorth}");
-#endif
-            Progress = initialProgress;
-            Display();
+            #endif // stats for those curious. Build in Release mode to remove
+
+            Progress = initialProgress; // Set initial progress
+            Display(); // and show for the first time
         }
 
         private void Display() // First-time display function
@@ -61,7 +61,6 @@ namespace ConsoleShortcuts
             // Subtract five too as we need five chars at the end for possible ' 100%'
             Console.Write(BraceR);
             Console.Write($" {Progress}%");
-
         }
 
         private void Update(int delta)
@@ -79,7 +78,6 @@ namespace ConsoleShortcuts
             Console.Write($"{newProgress}%");
             Console.CursorLeft = ProgressChars + 1; // to account for left brace
             Console.Write(new string(Fill, delta));
-
         }
     }
 }
