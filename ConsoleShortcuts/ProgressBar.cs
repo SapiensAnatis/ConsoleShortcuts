@@ -52,7 +52,7 @@ namespace ConsoleShortcuts
         {
             Console.Write(BraceL);
             Console.Write(new string(Fill, ProgressChars));
-            Console.CursorLeft = Space - // Go to the end and output the right brace,
+            Console.CursorLeft = Space - 5; // Go to the end and output the right brace,
             // Subtract five too as we need five chars at the end for possible ' 100%'
             Console.Write(BraceR);
             Console.Write($" {Progress}%");
