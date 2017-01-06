@@ -30,9 +30,17 @@ namespace ConsoleShortcuts
             { 
                 Update(value - Progress); // Call Update() here so we can access the old value of progress and add delta in Update() to get the new.
                 _Progress = value;
-                
+
+                ProgressChars = value / CharWorth;
+
             }
         }
+
+        private int ProgressChars { get; set; }
+
+        private static int Space { get; set; } = Console.WindowWidth;
+        private static int ProgressCharsAvail { get; set; } = Space - (1 + 1 + 5); // the amount of fill we're able to give. subtract 1 and 1 for both braces, and 5 for space then 100% at the end
+        private static int CharWorth { get; set; } = 100 / ProgressCharsAvail; // How much progress each character represents
 
         public ProgressBar(int initialProgress) // Constructor
         {
@@ -42,18 +50,13 @@ namespace ConsoleShortcuts
 
         private void Display() // First-time display function
         {
-            
-            Console.Write(new String(' ', 100)); // Go to the end and output the right brace,
+            Console.Write(BraceL);
+            Console.Write(new string(Fill, ProgressChars));
+            Console.CursorLeft = Space - // Go to the end and output the right brace,
+            // Subtract five too as we need five chars at the end for possible ' 100%'
             Console.Write(BraceR);
             Console.Write($" {Progress}%");
-            Console.Write("\r"); // then use carriage return hacks to go back and write the left brace + progress
-            Console.Write(BraceL);
-            for (int i = 0; i < 101; i++)
-            {
-                if (i > Progress) { break; }
-                Console.Write(Fill);
-            }
-            
+
         }
 
         private void Update(int delta)
