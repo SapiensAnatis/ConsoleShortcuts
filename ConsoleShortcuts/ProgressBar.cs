@@ -103,12 +103,12 @@ namespace ConsoleShortcuts
                 Console.CursorLeft = Space - 6;
                 Console.Write($"{BraceR} {newProgress}%"); // Then cut off that last bit with the bracket and percentage value
                 Done = true;
-                return;
+                return; // prevent the below block of code from executing
             }
             Console.CursorLeft = Space - 4;
-            Console.Write($"{newProgress}%");
-            Console.CursorLeft = ProgressChars+1; // to account for left brace
-            Console.Write(new string(Fill, GetCharValue(newProgress) - ProgressChars));
+            Console.Write($"{newProgress}%"); // Update end progress
+            Console.CursorLeft = ProgressChars+1; // Go to the end of the current fill
+            Console.Write(new string(Fill, GetCharValue(newProgress) - ProgressChars)); // And add in the required amount of progress. Don't use delta as it causes issues with rounding and can leave gaps.
 
             // On finishing update, set cursor to presumably safe position in case the user wants to write
 
