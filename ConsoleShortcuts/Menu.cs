@@ -85,7 +85,7 @@ namespace ConsoleShortcuts
         }
     }
 
-    public class HighlightMenu : BaseMenu
+    public class HighlightMenu : BaseMenu // N.B. ShowNumbers is unsupported on this menu. Not likely to be implemented in future. Can't be bothered, it's somehow more difficult than it sounds.
     {
         private int _selectedOption = 0; // backing field to avoid recursion in custom get; set; statement
         private int SelectedOption

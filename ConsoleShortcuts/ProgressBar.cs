@@ -74,9 +74,7 @@ namespace ConsoleShortcuts
 
         private void Display(int initialProgress) // First-time display function
         {
-            Console.CursorTop = Line;
-
-            Console.CursorLeft = 0;
+            Console.SetCursorPosition(0, Line); // Start of our chosen line to write brace
             Console.Write(BraceL);
             
             Console.Write(new string(Fill, GetCharValue(initialProgress)));
