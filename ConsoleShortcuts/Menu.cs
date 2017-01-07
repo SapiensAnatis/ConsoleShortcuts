@@ -173,7 +173,7 @@ namespace ConsoleShortcuts
                 else if (input.Key == ConsoleKey.DownArrow && SelectedOption == Options.Length-1)
                     { SelectedOption = 0; }
 
-                input = Console.ReadKey(); // Get a new key and repeat the loop
+                input = Console.ReadKey(true); // Get a new key and repeat the loop
                 
             }
 
