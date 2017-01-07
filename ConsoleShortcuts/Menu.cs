@@ -158,7 +158,7 @@ namespace ConsoleShortcuts
 
         public Tuple<int, string> GetSelection() // This method should be public as we need to return values back up to the code where we're instancing the menu.
         {
-            var input = Console.ReadKey();
+            var input = Console.ReadKey(true);
             while (input.Key != ConsoleKey.Enter)
             {
                 // Normal input handlers

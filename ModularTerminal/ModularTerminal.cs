@@ -16,14 +16,26 @@ namespace ModularTerminal
 
             if (result.Item1 == 1)
             {
-                var P = new ProgressBar(0);
+                
+                ProgressBar[] wow = new ProgressBar[10];
+                for (int x = 0; x <= 9; x++)
+                {
+                    wow[x] = new ProgressBar(10-x, x + 2);
+                }
+
                 for (int i = 0; i <= 100; i++)
                 {
-                    P.Progress = i;
+                    foreach(ProgressBar p in wow)
+                    {
+                        /*if (i % (p.Line) == 0)
+                            p.Progress = i;*/
+                        p.Progress++;
+                    }
                     System.Threading.Thread.Sleep(100);
                 }
-            }
 
+            }
+            Console.CursorTop++;
             new Exit();
         }
     }
