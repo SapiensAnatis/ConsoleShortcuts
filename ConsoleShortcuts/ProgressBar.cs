@@ -93,14 +93,16 @@ namespace ConsoleShortcuts
             { return; }
                 
             if (delta < 0) { throw new ArgumentException($"Progress change cannot be negative! Current progress {Progress}, delta calculated {delta}"); } // This program does not support going backwards
+            // Can't be bothered to delete characters and such. Also what sort of evil progress bar goes backwards?
 
             int newProgress = Progress + delta;
 
             if (newProgress > 99) { // if finished (hacks)
                 Console.CursorLeft = ProgressChars; // Go to where we left off
                 Console.Write(new String(Fill, Space - Console.CursorLeft)); // Fill enough of the new line with the fill to ensure it's full at the end but -1 so no newline
-                Console.CursorTop = Line; // incase a newline was caused by that
-                Console.CursorLeft = Space - 6;
+
+                Console.SetCursorPosition(Line, Space - 6); // Go back to where the brace should be to overwrite excess
+                                                            // Prevents possible newlines caused by wrapping from being an issue
                 Console.Write($"{BraceR} {newProgress}%"); // Then cut off that last bit with the bracket and percentage value
                 Done = true;
                 return; // prevent the below block of code from executing
@@ -109,8 +111,6 @@ namespace ConsoleShortcuts
             Console.Write($"{newProgress}%"); // Update end progress
             Console.CursorLeft = ProgressChars+1; // Go to the end of the current fill
             Console.Write(new string(Fill, GetCharValue(newProgress) - ProgressChars)); // And add in the required amount of progress. Don't use delta as it causes issues with rounding and can leave gaps.
-
-            // On finishing update, set cursor to presumably safe position in case the user wants to write
 
         }
     }
