@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleShortcuts
 {
@@ -28,7 +24,7 @@ namespace ConsoleShortcuts
             get { return _Progress; }
             set
             { 
-                Update(value - Progress); // Call Update() here so we can access the old value of progress and add delta in Update() to get the new.
+                Update(delta: value - Progress); // Call Update() here so we can access the old value of progress and add delta in Update() to get the new.
                 _Progress = value;
             }
         }
@@ -42,19 +38,20 @@ namespace ConsoleShortcuts
         }
 
         private static int Space { get; set; } = Console.WindowWidth;
-        private static double ProgressCharsAvail { get; set; } = Space - (1 + 1 + 5); // the amount of fill we're able to give. subtract 1 and 1 for both braces, and 5 for space then 100% at the end
+        private static double ProgressCharsAvail { get; set; } = Space - ($"[] 100%").Length; // the amount of fill we're able to give. subtract 1 and 1 for both braces, and 5 for space then 100% at the end
         private static double CharWorth { get; set; } = 100 / ProgressCharsAvail; // How much progress each character represents
         private static int InitialProgress { get; set; }
 
         public int Line { get; set; }
 
-        public bool Done { get; set; } = false;
+        public bool IsDone { get; set; } = false;
 
         public ProgressBar(int initialProgress, int line) // Constructor
         {
-#if DEBUG
-            //Console.WriteLine($"We have {Space} characters available in this console.\n\t- This means that we have {ProgressCharsAvail} fills available.\n\t- Each character is worth {CharWorth}");
-#endif // stats for those curious. Build in Release mode to remove
+        #if DEBUG
+             //Console.WriteLine($"We have {Space} characters available in this console.\n\t- This means that we have {ProgressCharsAvail} fills available.\n\t- Each character is worth {CharWorth}");
+        #endif 
+             // stats for those curious. Build in Release mode to remove
              // Yes, you need to subtract 2 for it to be accurate. No, I don't know why.
             Line = line;
             Display(initialProgress); // Show for the first time
@@ -87,7 +84,7 @@ namespace ConsoleShortcuts
         private void Update(int delta)
         {
             Console.CursorTop = Line;
-            if (Done)
+            if (IsDone)
             { return; }
                 
             if (delta < 0) { throw new ArgumentException($"Progress change cannot be negative! Current progress {Progress}, delta calculated {delta}"); } // This program does not support going backwards
@@ -101,8 +98,8 @@ namespace ConsoleShortcuts
 
                 Console.SetCursorPosition(Line, Space - 6); // Go back to where the brace should be to overwrite excess
                                                             // Prevents possible newlines caused by wrapping from being an issue
-                Console.Write($"{BraceR} {newProgress}%"); // Then cut off that last bit with the bracket and percentage value
-                Done = true;
+                Console.Write($"{BraceR} {newProgress}%");  // Then cut off that last bit with the bracket and percentage value
+                IsDone = true;
                 return; // prevent the below block of code from executing
             }
             Console.CursorLeft = Space - 4;
