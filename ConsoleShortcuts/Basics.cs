@@ -26,6 +26,11 @@ namespace ConsoleShortcuts
         {
             while (Console.ReadKey().Key != exitKey) {  } // While they haven't pressed the exit key, do nothing else.
             System.Environment.Exit(0); // Provide an exit (works only for consoles, which is fine given the name of this project)
+
+            // We only get here if the above failed, so try increasingly desperate measures...
+            System.Diagnostics.Process.GetCurrentProcess().Close(); // ....
+            System.Diagnostics.Process.GetCurrentProcess().Kill();  // ....
+                                                                    // anything more is just stupid. What am I going to do? Shut down the PC?
         }
     }
 
@@ -37,12 +42,14 @@ namespace ConsoleShortcuts
             if (nl) { Console.Write("\n"); }
             // We do not call Receive() here as it returns types that need to be available to the scope in which this class was instanced.
             // as a result, it will have to be called there.
-        }
+        } 
 
-        public T Receive()
+        public T Result
         {
-            string tmpResult = Console.ReadLine(); // Actually get input
-            return (T)Convert.ChangeType(tmpResult, typeof(T));
+            get {
+                string tmpResult = Console.ReadLine(); // Actually get input
+                return (T)Convert.ChangeType(tmpResult, typeof(T));
+            }
         }
     }
 }

@@ -15,12 +15,10 @@ namespace ConsoleShortcuts
         {
             Index = index; Text = text; 
         }
-
         // You could also extend this struct to make it even further better than a tuple
         // by including metrics such as the time taken to make that decision.
     }
 
-    #region Menu Classes
     public abstract class BaseMenu
     {
         // --- Properties
@@ -117,12 +115,9 @@ namespace ConsoleShortcuts
                 // First, we must erase the highlight of the current selected option:
 
                 Console.SetCursorPosition(0, OptionZeroLine + SelectedOptionIndex); // Go to the line of our current (old) selected option
-                int ToEndOfWin = Console.WindowWidth;
 
-                Console.WriteLine($"\t  {Options[_SelectedOptionIndex]}".PadRight(ToEndOfWin)); 
-                // Write over but without highlight, all the way to the end.
-                // It should be impossible for this to run over to new lines. I've not been able to make it happen
-                // This is different to writing a normal non-highlighted option as we need to clear the trailing whitespace to the right that would've previously been added.
+                Console.Write($"\t  {Options[_SelectedOptionIndex]}"); // Overwrite the option 
+                Console.WriteLine("".PadRight(Console.WindowWidth)); // then remove any highlight trail. PadRight will not cause newlines.
 
                 // Now, we target our newly selected option and give it a highlight.
                 Console.SetCursorPosition(0, value + OptionZeroLine);
@@ -144,6 +139,7 @@ namespace ConsoleShortcuts
             get { return OptionZeroLine + Options.Length - 1; } // minus one: Option zero, our ref point, also contributes to the length.
         }
 
+        // Methods
         private void PrintHighlightedOption(string Option)
         {
             Console.Write("\t"); // We're writing the tab outside of the main print for stlystic reasons; we want the highlight to have a left margin a little bit.
@@ -155,7 +151,7 @@ namespace ConsoleShortcuts
             Console.ResetColor(); // clear up for whatever we're doing next
         }
 
-        public void Display() // First time draw, draw out the whole menu
+        public void Display() // First time draw, draw out the whole menu. Don't use more than once.
         {
             Console.WriteLine(Prompt);
 
@@ -206,5 +202,4 @@ namespace ConsoleShortcuts
 
        
     }
-#endregion
 }
